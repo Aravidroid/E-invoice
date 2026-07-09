@@ -317,8 +317,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.print();
   };
 
-  printBtn.addEventListener('click', printInvoice);
-  modalPrintBtn.addEventListener('click', printInvoice);
+  if (printBtn) printBtn.addEventListener('click', printInvoice);
+  if (modalPrintBtn) modalPrintBtn.addEventListener('click', printInvoice);
 
   // Trigger PDF File Generation & Download
   const downloadPDF = () => {
@@ -336,19 +336,24 @@ document.addEventListener('DOMContentLoaded', () => {
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // Show visual loading indicator
-    downloadPdfBtn.disabled = true;
-    const oldText = downloadPdfBtn.innerHTML;
-    downloadPdfBtn.innerHTML = `
-      <svg class="btn-icon animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
-      Generating...
-    `;
+    // Show visual loading indicator if button exists
+    let oldText = '';
+    if (downloadPdfBtn) {
+      downloadPdfBtn.disabled = true;
+      oldText = downloadPdfBtn.innerHTML;
+      downloadPdfBtn.innerHTML = `
+        <svg class="btn-icon animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+        Generating...
+      `;
+    }
 
     // Process conversion
     html2pdf().set(options).from(targetElement).save()
       .then(() => {
-        downloadPdfBtn.disabled = false;
-        downloadPdfBtn.innerHTML = oldText;
+        if (downloadPdfBtn) {
+          downloadPdfBtn.disabled = false;
+          downloadPdfBtn.innerHTML = oldText;
+        }
         
         // Auto-increment the invoice counter localstorage for a successful operation
         incrementInvoiceCounter();
@@ -356,13 +361,15 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch((err) => {
         console.error('PDF export failed:', err);
         alert('PDF Generation failed. Please try printing to PDF instead.');
-        downloadPdfBtn.disabled = false;
-        downloadPdfBtn.innerHTML = oldText;
+        if (downloadPdfBtn) {
+          downloadPdfBtn.disabled = false;
+          downloadPdfBtn.innerHTML = oldText;
+        }
       });
   };
 
-  downloadPdfBtn.addEventListener('click', downloadPDF);
-  modalDownloadBtn.addEventListener('click', downloadPDF);
+  if (downloadPdfBtn) downloadPdfBtn.addEventListener('click', downloadPDF);
+  if (modalDownloadBtn) modalDownloadBtn.addEventListener('click', downloadPDF);
 
   // Auto increment invoice count helper
   const incrementInvoiceCounter = () => {
