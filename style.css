@@ -427,7 +427,6 @@ body {
 .invoice-card {
   width: 100%;
   max-width: 800px;
-  min-height: 1050px;
   background-color: #ffffff;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-lg);
@@ -961,6 +960,11 @@ body {
    PRINT MEDIA QUERIES (A4 PRINT OPTIMIZATIONS)
    ========================================================================== */
 @media print {
+  @page {
+    size: A4 portrait;
+    margin: 5mm; /* Reduce default browser margins */
+  }
+
   /* Hide all dashboard UI panels */
   .no-print, 
   .app-header, 
@@ -1008,11 +1012,12 @@ body {
     box-shadow: none !important;
     border: none !important;
     border-radius: 0 !important;
-    padding: 15mm 15mm !important; /* Standard printable margins */
+    padding: 10mm 15mm !important; /* Slightly smaller top/bottom padding for print */
     margin: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
-    min-height: 297mm !important; /* Full page print height */
+    height: auto !important;
+    min-height: 0 !important;
     background-color: #ffffff !important;
     display: flex !important;
     flex-direction: column !important;
