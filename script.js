@@ -379,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const oldText = whatsappBtn.innerHTML;
     whatsappBtn.innerHTML = `
       <svg class="btn-icon animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" style="animation: spin 1s linear infinite; margin-right: 0.5rem;"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" style="opacity: 0.25;"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" style="opacity: 0.75;"></path></svg>
-      Uploading PDF...
+      Preparing PDF...
     `;
 
     const targetElement = document.getElementById('invoice-card');
@@ -396,87 +396,43 @@ document.addEventListener('DOMContentLoaded', () => {
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // Render HTML to PDF Blob
-    html2pdf().set(options).from(targetElement).toPdf().outputPdf('blob')
-      .then(async (blob) => {
-        // Upload Blob to Vercel Blob Storage via local API
-        const formData = new FormData();
-        formData.append('file', blob, filename);
+    // Render HTML to PDF and trigger download
+    html2pdf().set(options).from(targetElement).save()
+      .then(() => {
+        // Setup Text Parameters
+        const customerPhone = customerPhoneInput.value.trim().replace(/\D/g, ''); // Extract raw digits
+        const companyName = 'The Wedding Blouse By Kaaru';
 
-        try {
-          const response = await fetch('/api/upload', {
-            method: 'POST',
-            body: formData
-          });
-          const data = await response.json();
-
-          if (data && data.url) {
-            const downloadUrl = data.url;
-            
-            // Setup Text Parameters
-            const customerPhone = customerPhoneInput.value.trim().replace(/\D/g, ''); // Extract raw digits
-            const companyName = 'The Wedding Blouse By Kaaru';
-
-            // Construct Text Body with Direct PDF URL
-            const messageText = 
+        // Construct Text Body with instructions
+        const messageText = 
 `Hello ${customerName},
 
-Thank you for your purchase.
-
-Please download your invoice PDF here:
-${downloadUrl}
+Thank you for your purchase. Please find your invoice attached below.
 
 Regards,
 ${companyName}`;
 
-            const encodedMessage = encodeURIComponent(messageText);
-            
-            // If the phone number exists, prefix country code if needed (Indian numbers usually prefix 91 if length is 10)
-            let formattedPhone = customerPhone;
-            if (customerPhone.length === 10) {
-              formattedPhone = '91' + customerPhone;
-            }
-
-            // Launch WhatsApp tab
-            const whatsAppUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodedMessage}`;
-            window.open(whatsAppUrl, '_blank');
-
-            // Auto-increment the invoice counter localstorage for a successful operation
-            incrementInvoiceCounter();
-          } else {
-            throw new Error(data.message || 'Server did not return a valid URL.');
-          }
-        } catch (uploadErr) {
-          console.error('PDF upload failed, using fallback message:', uploadErr);
-          alert('Could not upload PDF directly. Opening WhatsApp with details - please download the PDF manually and attach it.');
-          
-          // Fallback text sharing
-          const customerPhone = customerPhoneInput.value.trim().replace(/\D/g, '');
-          const companyName = 'The Wedding Blouse By Kaaru';
-          const messageText = 
-`Hello ${customerName},
-
-Thank you for your purchase.
-
-Regards,
-${companyName}`;
-
-          const encodedMessage = encodeURIComponent(messageText);
-          let formattedPhone = customerPhone;
-          if (customerPhone.length === 10) {
-            formattedPhone = '91' + customerPhone;
-          }
-
-          const whatsAppUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodedMessage}`;
-          window.open(whatsAppUrl, '_blank');
-        } finally {
-          whatsappBtn.disabled = false;
-          whatsappBtn.innerHTML = oldText;
+        const encodedMessage = encodeURIComponent(messageText);
+        
+        // If the phone number exists, prefix country code if needed (Indian numbers usually prefix 91 if length is 10)
+        let formattedPhone = customerPhone;
+        if (customerPhone.length === 10) {
+          formattedPhone = '91' + customerPhone;
         }
+
+        // Launch WhatsApp tab
+        const whatsAppUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodedMessage}`;
+        window.open(whatsAppUrl, '_blank');
+
+        // Auto-increment the invoice counter localstorage for a successful operation
+        incrementInvoiceCounter();
+        
+        whatsappBtn.disabled = false;
+        whatsappBtn.innerHTML = oldText;
       })
-      .catch((pdfErr) => {
-        console.error('PDF generation failed:', pdfErr);
-        alert('PDF generation failed. Please try printing or downloading directly.');
+      .catch((err) => {
+        console.error('PDF generation/WhatsApp share failed:', err);
+        alert('Could not prepare PDF or open WhatsApp. Please try again.');
         whatsappBtn.disabled = false;
         whatsappBtn.innerHTML = oldText;
       });
