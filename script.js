@@ -324,15 +324,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const downloadPDF = () => {
     if (!validateInvoiceInputs()) return;
 
-    const targetElement = document.getElementById('invoice-card');
+    // Get the currently visible invoice card
+    const targetElement = invoiceModal.classList.contains('active') 
+      ? modalInvoiceBody.querySelector('.invoice-card') 
+      : document.getElementById('invoice-card');
+
     const invoiceNo = invoiceNoInput.value.trim() || 'INV-TEMP';
     const customerName = customerNameInput.value.trim().replace(/\s+/g, '_');
+
+    // Temporarily force desktop layout on mobile devices
+    targetElement.classList.add('pdf-exporting');
 
     const options = {
       margin:       0,
       filename:     `Invoice_${invoiceNo}_${customerName}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true, logging: false },
+      html2canvas:  { scale: 2, useCORS: true, logging: false, windowWidth: 800 },
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
@@ -350,6 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Process conversion
     html2pdf().set(options).from(targetElement).save()
       .then(() => {
+        targetElement.classList.remove('pdf-exporting'); // Remove forced desktop class
         if (downloadPdfBtn) {
           downloadPdfBtn.disabled = false;
           downloadPdfBtn.innerHTML = oldText;
@@ -359,6 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
         incrementInvoiceCounter();
       })
       .catch((err) => {
+        targetElement.classList.remove('pdf-exporting'); // Remove forced desktop class
         console.error('PDF export failed:', err);
         alert('PDF Generation failed. Please try printing to PDF instead.');
         if (downloadPdfBtn) {
@@ -389,7 +398,14 @@ document.addEventListener('DOMContentLoaded', () => {
       Preparing PDF...
     `;
 
-    const targetElement = document.getElementById('invoice-card');
+    // Get the currently visible invoice card
+    const targetElement = invoiceModal.classList.contains('active') 
+      ? modalInvoiceBody.querySelector('.invoice-card') 
+      : document.getElementById('invoice-card');
+
+    // Temporarily force desktop layout on mobile devices
+    targetElement.classList.add('pdf-exporting');
+
     const invoiceNo = invoiceNoInput.value.trim() || 'INV-TEMP';
     const customerName = customerNameInput.value.trim();
     const customerNameSafe = customerName.replace(/\s+/g, '_');
@@ -399,13 +415,14 @@ document.addEventListener('DOMContentLoaded', () => {
       margin:       0,
       filename:     filename,
       image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true, logging: false },
+      html2canvas:  { scale: 2, useCORS: true, logging: false, windowWidth: 800 },
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
     // Render HTML to PDF and trigger download
     html2pdf().set(options).from(targetElement).save()
       .then(() => {
+        targetElement.classList.remove('pdf-exporting'); // Remove forced desktop class
         // Setup Text Parameters
         const customerPhone = customerPhoneInput.value.trim().replace(/\D/g, ''); // Extract raw digits
         const companyName = 'The Wedding Blouse By Kaaru';
@@ -438,6 +455,7 @@ ${companyName}`;
         whatsappBtn.innerHTML = oldText;
       })
       .catch((err) => {
+        targetElement.classList.remove('pdf-exporting'); // Remove forced desktop class
         console.error('PDF generation/WhatsApp share failed:', err);
         alert('Could not prepare PDF or open WhatsApp. Please try again.');
         whatsappBtn.disabled = false;

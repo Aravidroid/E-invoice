@@ -652,22 +652,29 @@ body {
 }
 
 .signature-box {
-  text-align: center;
-  min-width: 160px;
+    width: 220px;
+    margin-left: auto;      /* Pushes it to the extreme right */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 .seal-image-container {
-  height: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 0.25rem;
+    height: 130px;       /* Bigger than before */
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
 }
 
 .seal-image-container img {
-  max-height: 60px;
-  max-width: 120px;
-  object-fit: contain;
+    max-height: 120px;
+    max-width: 180px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
 }
 
 .sig-title {
@@ -954,6 +961,75 @@ body {
     height: 38px;
     margin-top: 0.5rem;
   }
+}
+
+@media (max-width: 480px) {
+  .app-container {
+    padding: 1rem;
+  }
+  .form-card {
+    border-radius: var(--radius-md);
+  }
+  .card-header, .card-body {
+    padding: 1rem;
+  }
+  .grid-2, .grid-3 {
+    grid-template-columns: 1fr;
+  }
+  .invoice-card {
+    padding: 15px;
+  }
+  .invoice-header h1 {
+    font-size: 1.35rem;
+  }
+  .invoice-header .brand-subtext {
+    font-size: 1.1rem !important;
+  }
+  .logo-container img {
+    max-height: 60px;
+  }
+  .total-row {
+    gap: 1rem;
+  }
+  .total-value {
+    font-size: 1.35rem;
+  }
+  .seal-image-container {
+    height: 90px;
+  }
+  .seal-image-container img {
+    max-height: 80px;
+  }
+  .modal-body {
+    padding: 1rem 0.5rem;
+  }
+}
+
+/* ==========================================================================
+   PDF EXPORT FORCED DESKTOP LAYOUT (OVERRIDES MOBILE)
+   ========================================================================== */
+.pdf-exporting {
+  width: 800px !important;
+  max-width: 800px !important;
+  padding: 50px !important;
+  background-color: #ffffff !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+.pdf-exporting .invoice-details-grid {
+  display: grid !important;
+  grid-template-columns: 1.2fr 1fr !important;
+  gap: 2rem !important;
+}
+.pdf-exporting .meta-details {
+  align-items: flex-end !important;
+}
+.pdf-exporting .company-contact-info {
+  flex-direction: row !important;
+  gap: 1.5rem !important;
+}
+.pdf-exporting .logo-container img {
+  max-height: 80px !important;
 }
 
 /* ==========================================================================
