@@ -464,34 +464,13 @@ function shareWhatsApp() {
     return;
   }
 
-  const invNum = document.getElementById('inv-number').value || '';
-  const invDate = document.getElementById('inv-date').value || '';
-  const custName = document.getElementById('cust-name').value || '';
-  const totalAmount = document.getElementById('display-grand').textContent || '₹0.00';
-  const companyName = 'The Wedding Blouse By Kaaru';
-
-  // Construct Text Body with instructions
-  const messageText = 
-`Hello ${custName},
-
-Please find attached Invoice ${invNum} dated ${fmtDate(invDate)} for your bridal order.
-
-Total Amount: ${totalAmount}
-
-Thank you for your visit!
-
-Warm regards,
-${companyName}`;
-
-  const encodedMessage = encodeURIComponent(messageText);
-
   let formattedPhone = phone;
   if (phone.length === 10) {
     formattedPhone = '91' + phone;
   }
 
   // Launch WhatsApp tab
-  const whatsAppUrl = `https://wa.me/${formattedPhone}?text=${encodedMessage}`;
+  const whatsAppUrl = `https://wa.me/${formattedPhone}`;
   window.open(whatsAppUrl, '_blank');
 }
 
