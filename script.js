@@ -404,13 +404,16 @@ async function exportPdf() {
     // Give browser a frame to render
     await new Promise(r => setTimeout(r, 300));
 
-    // 5. Get invoice number for filename
-    const invNum = document.getElementById('inv-number').value || 'Invoice';
+    // 5. Get invoice number and customer name for filename
+    const invNum = (document.getElementById('inv-number').value || 'Invoice').trim();
+    const custNameRaw = document.getElementById('cust-name').value || '';
+    const custNameClean = custNameRaw.trim().replace(/[/\\?%*:|"<>]/g, '').replace(/\s+/g, '_');
+    const suffix = custNameClean ? `_${custNameClean}` : '_Customer';
 
     // 6. html2pdf options
     const opt = {
       margin:      0,
-      filename:    `${invNum}_Kaaru.pdf`,
+      filename:    `${invNum}${suffix}.pdf`,
       image:       { type: 'jpeg', quality: 0.98 },
       html2canvas: {
         scale:           2,
