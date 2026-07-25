@@ -52,15 +52,9 @@
           <!-- Invoice Meta -->
           <div class="editor-card">
             <h2 class="editor-section-title">Invoice Details</h2>
-            <div class="form-grid-2">
-              <div class="form-group">
-                <label for="inv-number">Invoice #</label>
-                <input type="text" id="inv-number" placeholder="INV-001" />
-              </div>
-              <div class="form-group">
-                <label for="inv-date">Invoice Date</label>
-                <input type="date" id="inv-date" />
-              </div>
+            <div class="form-group">
+              <label for="inv-date">Invoice Date</label>
+              <input type="date" id="inv-date" />
             </div>
           </div>
 
@@ -120,9 +114,8 @@
             <div class="totals-preview">
               <div class="total-row"><span>Subtotal</span><span id="display-subtotal">₹0.00</span></div>
               <div class="total-row" id="row-discount"><span>Discount</span><span id="display-discount">₹0.00</span></div>
-              <div class="total-row total-grand"><span>Grand Total</span><span id="display-grand">₹0.00</span></div>
               <div class="total-row" id="row-advance"><span>Advance Paid</span><span id="display-advance">₹0.00</span></div>
-              <div class="total-row total-balance"><span>Balance Due</span><span id="display-balance">₹0.00</span></div>
+              <div class="total-row total-grand"><span>Grand Total</span><span id="display-grand">₹0.00</span></div>
             </div>
           </div>
 
@@ -175,7 +168,6 @@
               <div class="inv-meta-block">
                 <div class="inv-invoice-badge">INVOICE</div>
                 <table class="inv-meta-table">
-                  <tr><td>Invoice #</td><td id="pv-inv-number">—</td></tr>
                   <tr><td>Date</td><td id="pv-inv-date">—</td></tr>
                 </table>
               </div>
@@ -208,20 +200,15 @@
                   <td>Discount</td>
                   <td id="pv-discount">₹0.00</td>
                 </tr>
-                <tr class="tfoot-grand">
-                  <td colspan="3"></td>
-                  <td>Grand Total</td>
-                  <td id="pv-grand">₹0.00</td>
-                </tr>
                 <tr class="tfoot-line" id="pv-row-advance" style="display:none;">
                   <td colspan="3"></td>
                   <td>Advance Paid</td>
                   <td id="pv-advance">₹0.00</td>
                 </tr>
-                <tr class="tfoot-balance" id="pv-row-balance">
+                <tr class="tfoot-grand">
                   <td colspan="3"></td>
-                  <td>Balance Due</td>
-                  <td id="pv-balance">₹0.00</td>
+                  <td>Grand Total</td>
+                  <td id="pv-grand">₹0.00</td>
                 </tr>
               </tfoot>
             </table>

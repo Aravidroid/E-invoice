@@ -5,7 +5,6 @@
 'use strict';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────
-const LS_KEY_NUM   = 'kaaru_inv_number';
 const LS_KEY_DATA  = 'kaaru_inv_data';
 const A4_W_PX      = 794;
 const A4_H_PX      = 1123;
@@ -29,21 +28,6 @@ const fmtDate = (isoStr) => {
 };
 
 const genId = () => '_' + Math.random().toString(36).substr(2, 9);
-
-// ─── INVOICE NUMBER ───────────────────────────────────────────────────
-function getNextInvoiceNumber() {
-  const stored = parseInt(localStorage.getItem(LS_KEY_NUM) || '0', 10);
-  const next   = stored + 1;
-  localStorage.setItem(LS_KEY_NUM, next);
-  return `KBL-${String(next).padStart(4, '0')}`;
-}
-
-function initInvoiceNumber() {
-  const el = document.getElementById('inv-number');
-  if (!el.value) {
-    el.value = getNextInvoiceNumber();
-  }
-}
 
 // ─── DATE HELPERS ─────────────────────────────────────────────────────
 function setDefaultDates() {
@@ -147,61 +131,78 @@ function escHtml(str) {
 // ─── TOTALS ───────────────────────────────────────────────────────────
 function calcTotals() {
   const subtotal  = items.reduce((s, i) => s + parseNum(i.qty) * parseNum(i.rate), 0);
-  const discount  = parseNum(document.getElementById('inv-discount').value);
-  const advance   = parseNum(document.getElementById('inv-advance').value);
+  const discountEl = document.getElementById('inv-discount');
+  const discount  = discountEl ? parseNum(discountEl.value) : 0;
+  const advanceEl  = document.getElementById('inv-advance');
+  const advance   = advanceEl ? parseNum(advanceEl.value) : 0;
 
-  const afterDisc = Math.max(0, subtotal - discount);
-  const grand     = afterDisc;
-  const balance   = Math.max(0, grand - advance);
+  const grand     = Math.max(0, subtotal - discount);
 
-  return { subtotal, discount, grand, advance, balance };
+  return { subtotal, discount, grand, advance };
 }
 
 function updateTotals() {
   const t = calcTotals();
 
   // Editor display
-  document.getElementById('display-subtotal').textContent = fmt(t.subtotal);
-  document.getElementById('display-discount').textContent = fmt(t.discount);
-  document.getElementById('display-grand').textContent    = fmt(t.grand);
-  document.getElementById('display-advance').textContent  = fmt(t.advance);
-  document.getElementById('display-balance').textContent  = fmt(t.balance);
+  const subEl = document.getElementById('display-subtotal');
+  const discEl = document.getElementById('display-discount');
+  const grandEl = document.getElementById('display-grand');
+  const advEl = document.getElementById('display-advance');
+  if (subEl) subEl.textContent = fmt(t.subtotal);
+  if (discEl) discEl.textContent = fmt(t.discount);
+  if (grandEl) grandEl.textContent = fmt(t.grand);
+  if (advEl) advEl.textContent = fmt(t.advance);
 
   // Show/hide discount row
   const showDisc = t.discount > 0;
-  document.getElementById('row-discount').style.display  = showDisc ? '' : 'none';
+  const rowDisc = document.getElementById('row-discount');
+  if (rowDisc) rowDisc.style.display  = showDisc ? '' : 'none';
 
   // Show/hide advance row
   const showAdv = t.advance > 0;
-  document.getElementById('row-advance').style.display = showAdv ? '' : 'none';
+  const rowAdv = document.getElementById('row-advance');
+  if (rowAdv) rowAdv.style.display = showAdv ? '' : 'none';
 
   // Preview totals
-  document.getElementById('pv-subtotal').textContent = fmt(t.subtotal);
-  document.getElementById('pv-discount').textContent = fmt(t.discount);
-  document.getElementById('pv-grand').textContent    = fmt(t.grand);
-  document.getElementById('pv-advance').textContent  = fmt(t.advance);
-  document.getElementById('pv-balance').textContent  = fmt(t.balance);
+  const pvSubEl = document.getElementById('pv-subtotal');
+  const pvDiscEl = document.getElementById('pv-discount');
+  const pvGrandEl = document.getElementById('pv-grand');
+  const pvAdvEl = document.getElementById('pv-advance');
+  if (pvSubEl) pvSubEl.textContent = fmt(t.subtotal);
+  if (pvDiscEl) pvDiscEl.textContent = fmt(t.discount);
+  if (pvGrandEl) pvGrandEl.textContent = fmt(t.grand);
+  if (pvAdvEl) pvAdvEl.textContent = fmt(t.advance);
 
-  document.getElementById('pv-row-discount').style.display = showDisc ? '' : 'none';
-  document.getElementById('pv-row-advance').style.display  = showAdv  ? '' : 'none';
-  document.getElementById('pv-row-balance').style.display  = '';
+  const pvRowDisc = document.getElementById('pv-row-discount');
+  if (pvRowDisc) pvRowDisc.style.display = showDisc ? '' : 'none';
+
+  const pvRowAdv = document.getElementById('pv-row-advance');
+  if (pvRowAdv) pvRowAdv.style.display = showAdv ? '' : 'none';
 }
 
 // ─── PREVIEW SYNC ─────────────────────────────────────────────────────
 function syncMeta() {
-  const get = (id) => document.getElementById(id).value.trim();
+  const get = (id) => {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  };
 
-  document.getElementById('pv-inv-number').textContent  = get('inv-number') || '—';
-  document.getElementById('pv-inv-date').textContent    = fmtDate(get('inv-date'));
-  document.getElementById('pv-cust-name').textContent   = get('cust-name')    || '—';
-  document.getElementById('pv-cust-phone').textContent  = get('cust-phone')   || '—';
+  const pvDate = document.getElementById('pv-inv-date');
+  if (pvDate) pvDate.textContent = fmtDate(get('inv-date'));
+
+  const pvName = document.getElementById('pv-cust-name');
+  if (pvName) pvName.textContent = get('cust-name') || '—';
+
+  const pvPhone = document.getElementById('pv-cust-phone');
+  if (pvPhone) pvPhone.textContent = get('cust-phone') || '—';
 
   const terms = get('inv-terms');
   const pvTerms = document.getElementById('pv-terms');
   const termsWrap = document.getElementById('pv-terms-wrap');
 
-  pvTerms.textContent = terms;
-  termsWrap.style.display = terms ? '' : 'none';
+  if (pvTerms) pvTerms.textContent = terms;
+  if (termsWrap) termsWrap.style.display = terms ? '' : 'none';
 }
 
 function renderPreviewItems() {
@@ -243,8 +244,7 @@ function scalePreview() {
 
 // ─── BIND INPUTS → PREVIEW ────────────────────────────────────────────
 function bindInputs() {
-  const ids = ['inv-number','inv-date',
-               'cust-name','cust-phone','inv-terms'];
+  const ids = ['inv-date', 'cust-name', 'cust-phone', 'inv-terms'];
 
   ids.forEach(id => {
     const el = document.getElementById(id);
@@ -254,7 +254,7 @@ function bindInputs() {
     }
   });
 
-  ['inv-discount','inv-advance'].forEach(id => {
+  ['inv-discount', 'inv-advance'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', () => { updateTotals(); saveData(); });
   });
@@ -268,7 +268,6 @@ function saveData() {
   };
 
   const data = {
-    invNumber: getVal('inv-number'),
     invDate:   getVal('inv-date'),
     custName:  getVal('cust-name'),
     custPhone: getVal('cust-phone'),
@@ -294,12 +293,11 @@ function loadData() {
       if (el && v !== undefined) el.value = v;
     };
 
-    setVal('inv-number', data.invNumber);
     setVal('inv-date',   data.invDate);
     setVal('cust-name',  data.custName);
     setVal('cust-phone', data.custPhone);
     setVal('inv-discount', data.discount);
-    setVal('inv-advance',data.advance);
+    setVal('inv-advance', data.advance);
     setVal('inv-terms',  data.terms);
 
     if (data.items && Array.isArray(data.items)) {
@@ -317,7 +315,7 @@ function newInvoice() {
   localStorage.removeItem(LS_KEY_DATA);
 
   // Clear inputs
-  ['inv-number','inv-date','cust-name','cust-phone'].forEach(id => {
+  ['inv-date','cust-name','cust-phone'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -325,7 +323,7 @@ function newInvoice() {
   const termsEl = document.getElementById('inv-terms');
   if (termsEl) termsEl.selectedIndex = 0;
 
-  ['inv-discount','inv-advance'].forEach(id => {
+  ['inv-discount', 'inv-advance'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '0';
   });
@@ -336,7 +334,6 @@ function newInvoice() {
   document.getElementById('pv-items-body').innerHTML = '';
 
   // Re-init
-  initInvoiceNumber();
   setDefaultDates();
   addDefaultItems();
   syncMeta();
@@ -404,16 +401,15 @@ async function exportPdf() {
     // Give browser a frame to render
     await new Promise(r => setTimeout(r, 300));
 
-    // 5. Get invoice number and customer name for filename
-    const invNum = (document.getElementById('inv-number').value || 'Invoice').trim();
+    // 5. Get customer name for filename
     const custNameRaw = document.getElementById('cust-name').value || '';
     const custNameClean = custNameRaw.trim().replace(/[/\\?%*:|"<>]/g, '').replace(/\s+/g, '_');
-    const suffix = custNameClean ? `_${custNameClean}` : '_Customer';
+    const filename = custNameClean ? `${custNameClean}_TWB_invoice.pdf` : 'TWB_invoice.pdf';
 
     // 6. html2pdf options
     const opt = {
       margin:      0,
-      filename:    `${invNum}${suffix}.pdf`,
+      filename:    filename,
       image:       { type: 'jpeg', quality: 0.98 },
       html2canvas: {
         scale:           2,
@@ -472,8 +468,9 @@ function shareWhatsApp() {
     formattedPhone = '91' + phone;
   }
 
-  // Launch WhatsApp tab
-  const whatsAppUrl = `https://wa.me/${formattedPhone}`;
+  // Launch WhatsApp tab with pre-filled message
+  const text = "The Wedding Blouse by Kaaru would love your feedback https://g.page/r/CTBnP5QDQvdcEAE/review";
+  const whatsAppUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(text)}`;
   window.open(whatsAppUrl, '_blank');
 }
 
@@ -489,7 +486,6 @@ function init() {
   const restored = loadData();
 
   if (!restored) {
-    initInvoiceNumber();
     setDefaultDates();
     addDefaultItems();
   }
