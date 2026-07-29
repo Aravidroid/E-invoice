@@ -1,0 +1,350 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   CALCULATOR.CSS — Blouse Price Calculator Page Specific Styles
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── CALCULATOR PAGE LAYOUT ─────────────────────────────────────────── */
+.calculator-main {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: calc(100vh - 70px);
+}
+
+@media (min-width: 1024px) {
+  .calculator-main {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+}
+
+/* ─── LEFT EDITOR PANEL ─────────────────────────────────────────────── */
+#calc-editor-panel {
+  background: var(--bg-editor);
+  border-right: 1px solid var(--border-card);
+  padding: 32px;
+  overflow-y: auto;
+}
+
+/* Radio Group / Card Toggles */
+.pricing-mode-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.mode-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mode-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent);
+}
+
+.mode-card input[type="radio"] {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  accent-color: var(--accent);
+}
+
+.mode-card.active {
+  border-color: var(--accent);
+  background: rgba(212,168,83,0.08);
+  box-shadow: 0 0 15px rgba(212,168,83,0.1);
+}
+
+.mode-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.mode-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+/* Itemized Checkbox list */
+.custom-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+  padding-left: 8px;
+  animation: fadeIn 0.3s ease;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.checkbox-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.checkbox-label-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox-item input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.item-name {
+  font-size: 0.88rem;
+  color: var(--text-primary);
+}
+
+.item-price-input {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--accent);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-input);
+  border-radius: 6px;
+  width: 90px;
+  padding: 6px 10px;
+  text-align: right;
+  transition: all 0.2s ease;
+}
+
+.item-price-input:focus {
+  outline: none;
+  border-color: var(--accent-hover);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+/* Aari Input block */
+.aari-cost-wrapper {
+  margin-top: 16px;
+}
+
+.aari-input-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: end;
+}
+
+.aari-output-box {
+  background: rgba(212,168,83,0.06);
+  border: 1px dashed var(--border-input);
+  border-radius: 8px;
+  padding: 12px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.aari-output-label {
+  color: var(--text-secondary);
+}
+
+.aari-output-val {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* ─── RIGHT PREVIEW PANEL ───────────────────────────────────────────── */
+#calc-preview-panel {
+  background: var(--bg-app);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-y: auto;
+  gap: 24px;
+}
+
+/* Elegant Quote Card Mockup */
+#quote-card {
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  color: #1e1e1e;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border: 1px solid #e0d0b0;
+  font-family: var(--font-ui);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative Gold Borders for Card */
+#quote-card::before {
+  content: '';
+  position: absolute;
+  top: 8px; left: 8px; right: 8px; bottom: 8px;
+  border: 1px solid rgba(196, 154, 60, 0.25);
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.quote-brand {
+  text-align: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed #e0d5c0;
+}
+
+.quote-brand-title {
+  font-family: var(--font-invoice);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #8c6820;
+  letter-spacing: 0.05em;
+}
+
+.quote-brand-sub {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #666666;
+  margin-top: 4px;
+}
+
+.quote-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: #777777;
+  margin-bottom: 20px;
+}
+
+.quote-title {
+  font-family: var(--font-invoice);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 12px;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.quote-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+  font-size: 0.85rem;
+}
+
+.quote-table th {
+  text-align: left;
+  padding: 8px 0;
+  border-bottom: 2px solid #eeeeee;
+  color: #666666;
+  font-weight: 600;
+}
+
+.quote-table td {
+  padding: 10px 0;
+  border-bottom: 1px solid #f5f5f5;
+  color: #333333;
+}
+
+.quote-table td.text-right,
+.quote-table th.text-right {
+  text-align: right;
+}
+
+.quote-total-section {
+  border-top: 2px solid #e0d5c0;
+  padding-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.quote-total-label {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #333333;
+}
+
+.quote-total-val {
+  font-family: var(--font-invoice);
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: #8c6820;
+}
+
+.quote-footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #888888;
+  margin-top: 24px;
+  font-style: italic;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── PRINT OVERRIDES ───────────────────────────────────────────────── */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  #app-header, 
+  #calc-editor-panel, 
+  .header-actions,
+  #calc-preview-panel > *:not(#quote-card) {
+    display: none !important;
+  }
+  #calc-preview-panel {
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+  #quote-card {
+    box-shadow: none !important;
+    border: 1px solid #e0d0b0 !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+  .screen-only {
+    display: none !important;
+  }
+  .print-only {
+    display: table-row !important;
+  }
+}
+
+/* Helper utility for screen vs print elements */
+.print-only {
+  display: none !important;
+}
+.screen-only {
+  display: table-row;
+}
