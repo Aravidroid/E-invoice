@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const spanAariCalculated = document.getElementById('aari-calculated-price');
   
   const inputClientName = document.getElementById('client-name');
+  const inputClientPhone = document.getElementById('client-phone');
   const inputClientNotes = document.getElementById('client-notes');
   
   // Card elements
@@ -255,7 +256,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // Share via WhatsApp Action
   btnShareWhatsapp.addEventListener('click', () => {
     const text = encodeURIComponent(generateQuoteText());
-    window.open(`https://wa.me/?text=${text}`, '_blank');
+    let phone = inputClientPhone.value.trim().replace(/\D/g, '');
+    
+    // Automatically prepend India country code (91) if it's a 10-digit number
+    if (phone.length === 10) {
+      phone = '91' + phone;
+    }
+    
+    if (phone) {
+      window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+    } else {
+      window.open(`https://wa.me/?text=${text}`, '_blank');
+    }
   });
 
   // Initial Calculation
